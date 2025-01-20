@@ -50,6 +50,10 @@ if [ -z "$clipboard_content" ]; then
     exit 1
 fi
 
+# Ensure the target file exists (create it if necessary)
+mkdir -p "$(dirname "$file_path")"
+touch "$file_path"
+
 # Write the clipboard content to the specified file
 echo "$clipboard_content" > "$file_path"
 

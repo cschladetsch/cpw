@@ -1,27 +1,80 @@
+# Clipboard to Indexed File
 
-# cw: Clipboard to Indexed File
+`cw` is a versatile Bash script designed to manage the Windows clipboard content and file operations in WSL (Windows Subsystem for Linux). It can copy clipboard content to specific files, open indexed files in `vi`, or simply display usage instructions and log the current UTC build date.
 
-`cw` is a Bash script designed to copy the contents of the Windows clipboard to a file specified by its index in a `.index` file. It is particularly useful for developers using WSL (Windows Subsystem for Linux) who work with multiple target files.
+## Features
 
-The script reads the file paths from a `.index` file located in the current directory. Each line in `.index` corresponds to a file, indexed by its line number. For example, if `.index` contains the following:
+- **Copy Clipboard Content**: Writes clipboard content to a specified file or to a file indexed in `.index`.
+- **Open Indexed Files**: Opens files from `.index` in `vi` using a zero-based index.
+- **Log UTC Build Date**: When called with no arguments, appends the current UTC build date to `.index` and displays help instructions.
 
+## Usage
+
+```bash
+cw <target>
 ```
+
+### Arguments
+
+1. **Alphabetic File Name**:
+   - If `<target>` starts with a letter, it is treated as a filename.
+   - Example: `cw output.txt` writes clipboard content to `output.txt`.
+
+2. **Numeric Index**:
+   - If `<target>` is a number, it is treated as a zero-based index into the `.index` file.
+   - Example: `cw 0` writes clipboard content to the first file in `.index`.
+
+3. **Open in `vi`**:
+   - Use `x<number>` to open the file at the specified zero-based index in `vi`.
+   - Example: `cw x1` opens the second file in `.index`.
+
+4. **No Arguments**:
+   - Displays usage instructions and appends the current UTC build date to `.index`.
+
+### Example `.index` File
+
+```text
 src/main.cpp
 src/displace.cpp
 include/display.hpp
 ```
 
-Running `cw 2` will write the clipboard content to `src/displace.cpp`.
+### Commands
 
-The script provides robust error handling:
-- If the `.index` file is missing, it prompts you to create it and explains its purpose.
-- If the specified index is out of range, it informs you of the valid range based on the number of entries in `.index`.
-- If the clipboard is empty, it notifies you and suggests copying content before retrying.
+1. **Copy Clipboard to Indexed File**:
+   ```bash
+   cw 0
+   ```
+   Writes clipboard content to `src/main.cpp` (first entry in `.index`).
 
-### Requirements
-The script requires WSL with `powershell.exe` available in your system's PATH to fetch clipboard content from Windows.
+2. **Open File in `vi`**:
+   ```bash
+   cw x1
+   ```
+   Opens `src/displace.cpp` (second entry in `.index`) in `vi`.
 
-### Installation
+3. **Log UTC Build Date**:
+   ```bash
+   cw
+   ```
+   Appends the current UTC build date as a comment to `.index` and displays:
+   ```
+   UTC Build Date: 2025-01-20T08:01:44Z
+   ```
+
+## Error Handling
+
+- **Missing `.index` File**: Displays a helpful message if `.index` does not exist.
+- **Out-of-Range Index**: Alerts when a numeric index exceeds the number of entries in `.index`.
+- **Empty Clipboard**: Informs the user when the clipboard is empty.
+
+## Requirements
+
+- **WSL**: Windows Subsystem for Linux.
+- **PowerShell**: Accessible as `powershell.exe` to fetch clipboard content.
+
+## Installation
+
 1. Clone this repository:
    ```bash
    git clone https://github.com/cschladetsch/cw.git
@@ -36,16 +89,6 @@ The script requires WSL with `powershell.exe` available in your system's PATH to
    source ~/.bashrc
    ```
 
-### Usage
-To use the script, ensure a `.index` file exists in the current directory with file paths, one per line. Then run:
-```bash
-cw <index>
-```
-Replace `<index>` with the line number of the target file in `.index`. For example:
-```bash
-cw 2
-```
-This writes the clipboard content to the file specified on the second line of `.index`.
+## License
 
-### License
 This project is licensed under the MIT License.
